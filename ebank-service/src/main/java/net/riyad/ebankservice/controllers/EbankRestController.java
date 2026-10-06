@@ -2,13 +2,11 @@ package net.riyad.ebankservice.controllers;
 
 import net.riyad.ebankservice.entities.BankAccount;
 import net.riyad.ebankservice.services.EbankService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
 public class EbankRestController {
     private EbankService ebankService;
 

@@ -2,11 +2,13 @@ package net.riyad.ebankservice.services;
 
 import net.riyad.ebankservice.entities.BankAccount;
 import net.riyad.ebankservice.repository.BankAccountRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class EbankService {
     private BankAccountRepository accountRepository;
 
