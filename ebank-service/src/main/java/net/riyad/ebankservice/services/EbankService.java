@@ -1,6 +1,8 @@
 package net.riyad.ebankservice.services;
 
 import net.riyad.ebankservice.entities.BankAccount;
+import net.riyad.ebankservice.feign.CustomerRestClient;
+import net.riyad.ebankservice.model.Customer;
 import net.riyad.ebankservice.repository.BankAccountRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,21 +13,34 @@ import java.util.UUID;
 @Service
 public class EbankService {
     private BankAccountRepository accountRepository;
+    private CustomerRestClient customerRestClient;
 
-    public EbankService(BankAccountRepository accountRepository) {
+    public EbankService(BankAccountRepository accountRepository, CustomerRestClient customerRestClient) {
         this.accountRepository = accountRepository;
+        this.customerRestClient = customerRestClient;
     }
 
     public List<BankAccount> getAllBankAccounts() {
         return accountRepository.findAll();
     }
+
     public BankAccount getBankAccountById(String id) {
-        return accountRepository.findById(id)
+        BankAccount bankAccount=accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        bankAccount.setCustomer(
+                customerRestClient.getCustomerById(bankAccount.getCustomerId()));
+        return bankAccount;
     }
+
     public BankAccount save(BankAccount bankAccount) {
-        bankAccount.setId(UUID.randomUUID().toString());
-        bankAccount.setCreatedAt(new Date());
-        return accountRepository.save(bankAccount);
+        try{
+            Customer customer = customerRestClient.getCustomerById(bankAccount.getCustomerId());
+            bankAccount.setId(UUID.randomUUID().toString());
+            bankAccount.setCreatedAt(new Date());
+            return accountRepository.save(bankAccount);
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }
